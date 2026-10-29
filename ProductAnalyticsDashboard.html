@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Dashboard</title>
+</head>
+<body>
+    <h1>Product Dashboard</h1>
+
+<ol id="output"></ol>
+<ol id="order"></ol>
+<ul id="result"></ul>
+<div id="details"></div>
+
+<button id="btn">Click</button>
+<script>
+    let response = {
+    status: "success",
+    total: 6,
+    products: [
+        { id: 1, title: "Samsung Mobile", category: "electronics", price: 15000, stock: 10 },
+        { id: 2, title: "iPhone 15", category: "electronics", price: 55000, stock: 5 },
+        { id: 3, title: "Running Shoes", category: "fashion", price: 2000, stock: 20 },
+        { id: 4, title: "Smart Watch", category: "electronics", price: 3000, stock: 0 },
+        { id: 5, title: "Cotton Shirt", category: "fashion", price: 800, stock: 15 },
+        { id: 6, title: "Bluetooth Speaker", category: "electronics", price: 2500, stock: 8 }
+    ]
+};
+
+let output =document.getElementById("output")
+let result =document.getElementById("result")
+let details =document.getElementById("details")
+let order =document.getElementById("order")
+output.innerHTML=""
+
+// 1.Display All Products
+let convertArray=response.products
+ convertArray.forEach(a=>{
+    let list = document.createElement("li")
+    list.textContent=JSON.stringify(a,null,2)
+    output.appendChild(list)
+}
+)
+
+//2. Electronic Category -la irukura products name Display Pannu
+
+let ele = convertArray.filter(e=>{
+   return e.category.toLowerCase()==="electronics"
+})
+
+ele.forEach(e=>{
+    let list=document.createElement("li");
+    list.textContent=e.title
+result.appendChild(list)
+})
+
+
+//3.Get Product  Titles
+convertArray.forEach(p=>{
+    let list =document.createElement("li")
+    list.textContent=p.title
+output.appendChild(list)
+})
+
+//4.Find  stocks 
+let stocks = convertArray.filter(s=>{
+   return  s.stock<1
+})
+stocks.forEach(s=>{
+    let list =document.createElement("li")
+    list.textContent=`
+    ${s.title}=${JSON.stringify(s,null,2)}
+    `
+    order.appendChild(list)
+})
+
+//5.Price below 3000
+let price =convertArray.filter(p=>{
+    return p.price<3000
+})
+price.forEach(p=>{
+    let list =document.createElement("li")
+    list.textContent=`
+    ${p.title} = ${JSON.stringify(p,null,2)}
+    `
+    order.appendChild(list)
+})
+
+//6. Serch by products "s" letter
+let letter = convertArray.filter(l=>{
+  return  l.title.toLowerCase().includes("s") })
+  letter.forEach(l=>{
+    let list=document.createElement("li")
+    list.textContent=JSON.stringify(l.title,null,2)
+    result.appendChild(list)
+  })
+  
+
+  //7.Electronic products + 500 and display
+  let Increase = convertArray.filter(i=>i.category==="electronics")
+  .map(i=>{
+    return {
+    Title :i.title,
+    Oldprice :i.price,
+    newprice :i.price+500
+  }})
+  
+  Increase.forEach(i=>{
+    let list =document.createElement("li")
+    list.textContent =`${i.Title} = ${i.Oldprice}+500 = ${i.newprice}`
+    result.appendChild(list)
+  })
+
+  //8.id 3 irukura title name change "Sports Show"
+let match = convertArray.find(m => m.id === 3)
+  if(match){
+    let oldName =match.title;
+    match.title ="Sports Show"
+    let NewName =match.title 
+let list =document.createElement("li")
+list.textContent=`
+OldName : ${oldName} = NewName : ${NewName}
+`
+result.appendChild(list)
+  }
+
+//9. 3000 mela irukura amouts 10% Discount Calculate
+let Discount =convertArray.filter(u=>u.price>3000)
+.map(d=>{
+    return{
+        Title : d.title,
+        Amount :d.price,
+        DiscountAmout :d.price/10,
+        MinusAmount : d.price -(d.price/10)
+    }
+})
+
+Discount.forEach(d=>{
+    let list =document.createElement("li")
+    list.textContent=`
+ ${d.Title} = ${d.Amount} - ${d.DiscountAmout} = ${d.MinusAmount}
+    `
+    result.appendChild(list)
+})
+
+//10.Stock Status
+let stock0= convertArray.map(a=>{
+    return{
+        Title :a.title,
+        Stock :a.stock
+        
+    }
+})
+
+stock0.forEach(s=>{
+let list =document.createElement("li")
+list.textContent=`
+${s.Title} =${s.Stock}
+`
+result.appendChild(list)
+})
+
+//12.Total product,Electronic count ,out of stock count ,and all product ooda total calculate  and display the browser
+let btn =document.getElementById("btn")
+
+btn.addEventListener("click",()=>{
+    details.replaceChildren()
+    //Total product
+   convertArray.forEach(a=>{
+    let allProducts =document.createElement("h3")
+    allProducts.textContent=a.title
+    details.appendChild(allProducts)
+    details.style.color="red";
+    details.style.marginLeft="20px"
+   })
+
+   //Electronic Price Total count
+   let EvCount =convertArray.filter(u=>u.category==="electronics")
+   .reduce((a,b)=>a+b.price,0)
+   console.log(EvCount)
+   let h3=document.createElement("h3")
+   h3.textContent="Total Electronic Price = "+EvCount
+   details.appendChild(h3)
+   h3.style.color="green"
+
+   //1-ai vida adhigama irukkura products-oda stock quantity total 
+let out =convertArray.filter(u=>u.stock>1)
+.reduce((a,b)=>a+b.stock,0)
+ let h4 =document.createElement("h3")
+ h4.textContent= "Total stocks = "+out
+   details.appendChild(h4)
+   h4.style.color="blue"
+
+   //All Product Total
+   let AllItems =convertArray.reduce((a,b)=> a+b.price,0)
+    let h5 =document.createElement("h3")
+ h5.textContent= "Total Products = "+AllItems
+   details.appendChild(h5)
+   h5.style.color="maroon"
+})
+
+
+</script>
+</body>
+</html>
